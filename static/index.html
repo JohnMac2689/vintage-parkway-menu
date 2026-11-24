@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vintage Parkway Elementary School | Today's Menu</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%}
+body{font-family:Arial,Helvetica,sans-serif;background:#f0f1f3;color:#202124}
+.screen{width:100%;height:100vh;height:100dvh;display:flex;flex-direction:column;gap:1.25vh;padding:1.5vh 2vw;overflow:hidden}
+.header{background:linear-gradient(110deg,#171719 0%,#004b80 58%,#0079ae 100%);color:white;border-radius:18px;padding:1.2vh 2vw;min-height:13vh;display:flex;align-items:center;justify-content:space-between;gap:2vw;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:1.3vw;min-width:0}
+.logo,.logo-fallback{width:clamp(76px,9vh,120px);height:clamp(76px,9vh,120px);flex-shrink:0;border-radius:14px;background:#fff;object-fit:contain;padding:3px}
+.logo-fallback{display:none;align-items:center;justify-content:center;color:#004b80;font-size:28px;font-weight:900}
+.school{font-size:clamp(19px,1.5vw,30px);font-weight:900;letter-spacing:1.5px}
+.heading{font-size:clamp(34px,3vw,60px);font-weight:900;line-height:1.04;margin-top:3px}
+.date{font-size:clamp(19px,1.65vw,32px);font-weight:800;text-align:right;max-width:33%;line-height:1.2}
+.columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5vw;flex:1;min-height:0;position:relative;isolation:isolate}
+.columns::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(23vw,360px);height:min(23vw,360px);background:url("/static/nutrition-logo.png") center/contain no-repeat;opacity:.10;pointer-events:none;z-index:2}
+.panel{position:relative;z-index:1;background:linear-gradient(155deg,#fff,#fafafa);border:2px solid #d5d7da;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;min-height:0;min-width:0;box-shadow:0 4px 16px #0001}
+.panel-title{position:relative;z-index:3;color:#fff;font-size:clamp(28px,2.35vw,46px);font-weight:900;padding:1.15vh 1.7vw;flex-shrink:0}
+.breakfast .panel-title{background:linear-gradient(90deg,#004b80,#0079ae)}
+.lunch .panel-title{background:linear-gradient(90deg,#171719,#454045)}
+.panel-content{display:flex;flex-direction:column;gap:.7vh;padding:1.2vh 1.3vw 1.3vh;flex:1;min-height:0}
+.items{order:1;position:relative;z-index:3;display:flex;flex-direction:column;gap:.3vh;min-width:0;min-height:0;overflow:auto;flex:0 1 auto}
+.item{font-size:clamp(24px,1.8vw,36px);font-weight:800;line-height:1.14;border-bottom:1px solid #d5d7da;padding-bottom:.5vh;overflow-wrap:anywhere}
+.notice{font-size:clamp(22px,1.6vw,32px);color:#617987}
+.food-strip{order:2;display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:.7vw;width:100%;flex:1 1 0;min-height:85px;border-top:1px solid #d5d7da;padding-top:.7vh}
+.food-tile{display:block;min-width:0;min-height:0;overflow:hidden;border-radius:13px}
+.food-photo{display:block;width:100%;height:100%;object-fit:cover;border-radius:13px;border:2px solid #fff;box-shadow:0 2px 8px #0002}
+.food-photo.is-missing{display:none}
+.food-tile small{display:none}
+.announcement{display:flex;align-items:center;gap:1.1vw;padding:.9vh 1.5vw;background:linear-gradient(90deg,#e8eaed,#f8f8f8);border-left:8px solid #0079ae;border-radius:14px;min-height:5.4vh;flex-shrink:0;color:#004b80;font-size:clamp(17px,1.25vw,25px)}
+.announcement strong{white-space:nowrap}
+.footer{display:flex;justify-content:space-between;align-items:center;gap:1vw;font-size:clamp(14px,1vw,20px);font-weight:bold;color:#004b80;min-height:2.5vh;flex-shrink:0}
+.panel.dense .item{font-size:clamp(21px,1.55vw,31px);padding-bottom:.25vh;line-height:1.1}
+.panel.very-dense .item{font-size:clamp(19px,1.35vw,27px);padding-bottom:.15vh;line-height:1.07}
+@media(max-aspect-ratio:1/1){
+.screen{height:auto;min-height:100dvh;overflow:visible}
+.columns{grid-template-columns:1fr}
+.items{overflow:visible}
+.panel-content{min-height:280px}
+.food-strip{flex:none;height:clamp(155px,35vw,300px)}
+.columns::after{width:220px;height:220px}
+.date{max-width:38%}
+}
+</style>
+</head>
+<body>
+<main class="screen">
+  <header class="header">
+    <div class="brand">
+      <img class="logo" src="/static/school-logo.png" alt="Vintage Parkway Elementary School logo" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex'">
+      <div class="logo-fallback" id="logo-fallback">VP</div>
+      <div>
+        <div class="school">VINTAGE PARKWAY ELEMENTARY SCHOOL</div>
+        <div class="heading">Today's School Menu</div>
+      </div>
+    </div>
+    <div class="date" id="date"></div>
+  </header>
+
+  <section class="columns">
+    <article class="panel breakfast">
+      <div class="panel-title">☀ Regular Breakfast</div>
+      <div class="panel-content">
+        <div class="items" id="breakfast" aria-live="polite"></div>
+        <div class="food-strip" id="breakfast-photos" aria-label="Illustrative breakfast dishes"></div>
+      </div>
+    </article>
+    <article class="panel lunch">
+      <div class="panel-title">🍎 Lunch</div>
+      <div class="panel-content">
+        <div class="items" id="lunch" aria-live="polite"></div>
+        <div class="food-strip" id="lunch-photos" aria-label="Illustrative lunch dishes"></div>
+      </div>
+    </article>
+  </section>
+
+  <aside class="announcement"><strong>📣 CAFETERIA NEWS</strong><span>Fueling Vintage Parkway Dolphins to learn, grow, and succeed!</span></aside>
+  <footer class="footer"><span>Vintage Parkway Dolphins • Nutrition Services</span><span id="status">Connecting to MealViewer...</span></footer>
+</main>
+<script>
+const zone = "America/Los_Angeles";
+let currentDate = "";
+function dateString() {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
+    timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(new Date()).map(part => [part.type, part.value]));
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+function dateLabel() {
+  document.getElementById("date").textContent = new Intl.DateTimeFormat("en-US", {
+    timeZone: zone, weekday: "long", month: "long", day: "numeric", year: "numeric"
+  }).format(new Date());
+}
+function show(id, items, emptyMessage) {
+  const element = document.getElementById(id);
+  element.replaceChildren();
+  if (!Array.isArray(items) || !items.length) {
+    const notice = document.createElement("div");
+    notice.className = "notice";
+    notice.textContent = emptyMessage;
+    element.append(notice);
+    return;
+  }
+  
+  
+  for (const name of items) {
+    const item = document.createElement("div");
+    item.className = "item";
+    item.textContent = String(name);
+    element.append(item);
+  }
+}
+// Images are illustrative. Prioritize pictures matching actual MealViewer item names.
+const photoChoices = {
+  breakfast: [
+    ["menu-b-egg-bites.jpg","Three cheese egg bites",/egg bites|omelet|egg patty/i],
+    ["menu-b-cereal.jpg","Assorted cereal bowl",/cereal|cheerios|corn flakes/i],
+    ["menu-b-fruit-basket.jpg","Fresh fruit basket",/fruit basket|fresh fruit|apple|banana|berries|plum|orange/i],
+    ["menu-b-string-cheese.jpg","Mozzarella string cheese",/string cheese|mozzarella|cheese stick/i],
+    ["menu-b-oat-bar.jpg","Breakfast oat bar",/benefit bar|breakfast bar|oat bar|chocolate chunk/i],
+    ["menu-b-pbj.jpg","Peanut butter and jelly sandwich",/pb.?j|uncrustable|peanut butter.*jelly/i],
+    ["menu-b-sunbutter.jpg","Sunbutter sandwich",/sunbutter|sunflower butter/i],
+    ["menu-b-breakfast-sandwich.jpg","Breakfast sandwich",/breakfast sandwich|english muffin|sausage|biscuit/i],
+    ["menu-b-pancakes.jpg","Pancakes",/pancake|waffle|french toast/i],
+    ["menu-b-yogurt.jpg","Yogurt parfait",/yogurt|parfait|granola/i],
+    ["menu-b-oatmeal.jpg","Oatmeal",/oatmeal|overnight oats|porridge/i],
+    ["menu-b-breakfast-burrito.jpg","Breakfast burrito",/breakfast burrito|egg burrito|breakfast wrap/i]
+  ],
+  lunch: [
+    ["menu-l-mandarin-chicken.jpg","Mandarin chicken",/mandarin chicken|orange chicken|teriyaki/i],
+    ["menu-l-egg-roll.jpg","Vegetable egg roll",/egg roll|spring roll/i],
+    ["menu-l-fried-rice.jpg","Vegetable fried rice with edamame",/fried rice|edamame/i],
+    ["menu-l-grilled-chicken.jpg","Chicken and vegetables",/grilled chicken|roasted chicken|chicken breast/i],
+    ["menu-l-pizza.jpg","Cheese pizza",/pizza(?!.*quesadilla)/i],
+    ["menu-l-tacos.jpg","Tacos",/\btacos?\b(?!.*(?:stick|nada|wrap))/i],
+    ["menu-l-lunch-tray.jpg","School lunch tray",/lunch tray|meal/i],
+    ["menu-l-chicken-rice.jpg","Chicken and rice",/chicken and rice|chicken with rice/i],
+    ["menu-l-cheese-pizza.jpg","Cheese pizza slice",/cheese pizza/i],
+    ["menu-l-beef-tacos.jpg","Beef tacos",/beef tacos?\b(?!.*(?:stick|nada|wrap))/i],
+    ["menu-l-fresh-fruit.jpg","Fresh fruit",/fruit|plum|pluot|blackberr|strawberr|apple|orange|grape|pear|pineapple|kiwi|peach|banana|mango/i],
+    ["menu-l-cheese-fruit.jpg","Cheese and fruit",/cheese and fruit|string cheese/i]
+  ]
+};
+function updatePhotos(meal, items) {
+  const el = document.getElementById(meal + "-photos");
+  el.replaceChildren();
+  const choices = photoChoices[meal];
+  const names = Array.isArray(items) ? items.map(String) : [];
+  const date = dateString();
+  const seed = [...date].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, meal === "lunch" ? 41 : 17);
+  const ranked = choices.map((entry, i) => ({
+    entry, i,
+    matches: names.reduce((count, name) => count + Number(entry[2].test(name)), 0),
+    rotate: (i * 7 + seed) % choices.length
+  }));
+  // A matched picture always outranks a generic rotation picture.
+  ranked.sort((a,b) => b.matches-a.matches || a.rotate-b.rotate);
+  const chosen = ranked.filter(x => x.matches > 0).slice(0,3);
+  el.style.display = chosen.length ? "grid" : "none";
+  // Rotate picture positions each day while preserving relevant choices.
+  if (seed % 2) chosen.reverse();
+  for (const {entry} of chosen) {
+    const tile = document.createElement("div");
+    tile.className = "food-tile";
+    const img = document.createElement("img");
+    img.className = "food-photo";
+    img.src = "/static/" + entry[0];
+    img.alt = "Illustrative photo: " + entry[1];
+    img.onerror = () => { tile.style.display = "none"; };
+    tile.append(img);
+    el.append(tile);
+  }
+}
+async function refresh() {
+  dateLabel();
+  const status = document.getElementById("status");
+  status.textContent = "Checking live menu...";
+  currentDate = dateString();
+  try {
+    const response = await fetch("/api/menu", {cache: "no-store"});
+    if (!response.ok) throw new Error("Server error " + response.status);
+    const data = await response.json();
+    const count = Math.max((data.breakfast || []).length,(data.lunch || []).length);
+    document.querySelectorAll(".panel").forEach(p => {p.classList.toggle("dense",count>=7);p.classList.toggle("very-dense",count>=9);});
+    show("breakfast", data.breakfast || [], "No regular breakfast items listed today");
+    show("lunch", data.lunch || [], "No lunch items listed today");
+    updatePhotos("breakfast",data.breakfast);
+    updatePhotos("lunch",data.lunch);
+    currentDate = data.date || dateString();
+    status.textContent = "MealViewer updated " + new Intl.DateTimeFormat("en-US", {
+      timeZone: zone, hour: "numeric", minute: "2-digit"
+    }).format(new Date());
+  } catch (error) {
+    show("breakfast", [], "Live menu temporarily unavailable");
+    show("lunch", [], "Live menu temporarily unavailable");
+    updatePhotos("breakfast",[]);updatePhotos("lunch",[]);
+    status.textContent = "Unable to refresh menu";
+    console.error(error);
+  }
+}
+refresh();
+setInterval(refresh, 15 * 60 * 1000);
+setInterval(() => {
+  dateLabel();
+  if (currentDate !== dateString()) refresh();
+}, 60000);
+</script>
+</body>
+</html>
