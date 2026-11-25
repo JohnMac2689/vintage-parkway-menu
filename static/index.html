@@ -158,9 +158,9 @@ function updatePhotos(meal, items) {
     rotate: (i * 7 + seed) % choices.length
   }));
   // A matched picture always outranks a generic rotation picture.
-  ranked.sort((a,b) => b.matches-a.matches || a.rotate-b.rotate);
-  const chosen = ranked.filter(x => x.matches > 0).slice(0,3);
-  el.style.display = chosen.length ? "grid" : "none";
+  ranked.sort((a,b) => b.matches-a.matches || a.rotate-b.rotate); 
+const chosen = ranked.slice(0,3);
+el.style.display = "grid";
   // Rotate picture positions each day while preserving relevant choices.
   if (seed % 2) chosen.reverse();
   for (const {entry} of chosen) {
